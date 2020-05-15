@@ -91,7 +91,7 @@ void setup() //setup loop
 {
 
   Serial.begin(9600);                  //start the serial monitor
-  Serial.print("Start");               //Prints "Start" in the serial monitor so I know the code has started to run
+  Serial.println("Start");             //Prints "Start" in the serial monitor so I know the code has started to run
   SPI.begin();                         //Start the SPI protocol
   mfrc522.PCD_Init();                  //Initalise the RC-522
   display.setTextSize(1);              // Normal 1:1 pixel scale
@@ -174,7 +174,6 @@ void loop()
       display.setCursor(0, 0);                    //set the cursor to the top left pixel which is 0, 0 on the X Y grid
       display.write("Autherizing");               //write "Autherizing" to the screen buffer
       display.display();                          //Write all the data in the buffer to the screen
-      delay(2000);                                //Wait 2000ms or 2 seconds
       Serial.print("UID tag :");                  //prints "UID tag" to the serial monitor
       String content = "";                        //Initilize an empty string
       for (byte i = 0; i < mfrc522.uid.size; i++) //Run this 'for' the same ammount as the length of the RFID tag's UID
@@ -185,17 +184,38 @@ void loop()
         content.concat(String(mfrc522.uid.uidByte[i], HEX));                //Write the UID to the string
       }
       Serial.println();                          //move down a line in the serial monitor
+      delay(2000);                               //Wait 2000ms or 2 seconds
       content.toUpperCase();                     //make the UID all uppercase
       if (content.substring(1) == "A2 B8 5A 1C") //Check if the UID is the same as the UID in the parentheses
       {
-        display.clearDisplay();   //clear the display of any text that was on it previously
-        display.setCursor(0, 0);  //set the cursor to the top left pixel which is 0, 0 on the X Y grid
-        display.write("Access");  //Write "Access" to the buffer
-        display.setCursor(0, 14); //set the Cursor to X0 Y14 which will make any display commands start there instead of what was set previously
-        display.write("Granted"); //Write "Granted" to the buffer
-        display.display();        //Write all the data in the buffer to the screen
-        instructions = 0;         //added for development
-        delay(10000);             //wait 10000ms or 10 seconds
+        display.clearDisplay(); //clear the display of any text that was on it previously
+        display.setCursor(0, 0);
+        display.write("Full ");
+        //display.setCursor(0, 14);  //set the cursor to the top left pixel which is 0, 0 on the X Y grid
+        display.write("Access ");   //Write "Access" to the buffer
+        display.setCursor(0, 14);  //set the Cursor to X0 Y14 which will make any display commands start there instead of what was set previously
+        display.write("Granted:"); //Write "Granted" to the buffer
+        display.setCursor(0, 42);
+        display.write("Reuben Talbott");
+        display.display(); //Write all the data in the buffer to the screen
+        instructions = 0;  //added for development
+        delay(10000);     //wait 10000ms or 10 seconds
+        //lock = 1; disabled for development, if set to 1 it would end this intire while loop so the next section of code could run.
+      }
+      else if (content.substring(1) == "79 87 47 E9") //Check if the UID is the same as the UID in the parentheses
+      {
+        display.clearDisplay(); //clear the display of any text that was on it previously
+        display.setCursor(0, 0);
+        display.write("Limited ");
+        //display.setCursor(0, 14);  //set the cursor to the top left pixel which is 0, 0 on the X Y grid
+        display.write("Access ");   //Write "Access" to the buffer
+        display.setCursor(0, 14);  //set the Cursor to X0 Y14 which will make any display commands start there instead of what was set previously
+        display.write("Granted:"); //Write "Granted" to the buffer
+        display.setCursor(0, 42);
+        display.write("Ruth Tangeman");
+        display.display(); //Write all the data in the buffer to the screen
+        instructions = 0;  //added for development
+        delay(10000);      //wait 10000ms or 10 seconds
         //lock = 1; disabled for development, if set to 1 it would end this intire while loop so the next section of code could run.
       }
       else //if the UID is incorrect this else statement will run
